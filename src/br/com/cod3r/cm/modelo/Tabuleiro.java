@@ -5,16 +5,14 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-
-public class Tabuleiro implements CampoObservador{
-	private int Qtdlinhas;
-	private int Qtdcolunas;
-	private int Qtdminas;
+public class Tabuleiro implements CampoObservador {
+	private final int Qtdlinhas;
+	private final int Qtdcolunas;
+	private final int Qtdminas;
 
 	private final List<Campo> campos = new ArrayList<Campo>();
-	private final List<Consumer<ResultadoEvento>> observadores =
-			new ArrayList<>();
-	
+	private final List<Consumer<ResultadoEvento>> observadores = new ArrayList<>();
+
 	public Tabuleiro(int qtdlinhas, int qtdcolunas, int qtdminas) {
 		Qtdlinhas = qtdlinhas;
 		Qtdcolunas = qtdcolunas;
@@ -25,13 +23,18 @@ public class Tabuleiro implements CampoObservador{
 		sortearMinas();
 	}
 	
+	public void paraCadaCampo(Consumer<Campo> funcao) {
+		campos.forEach(funcao);
+		
+	}
 	public void registrarObservador(Consumer<ResultadoEvento> observador) {
 		observadores.add(observador);
 	}
+
 	public void notificarObservador(boolean resultado) {
 		observadores.stream().forEach(o -> o.accept(new ResultadoEvento(resultado)));
 	}
-	
+
 	public void abrir(int Qtdlinhas, int Qtdcolunas) {
 
 		try {
@@ -44,12 +47,10 @@ public class Tabuleiro implements CampoObservador{
 		}
 
 	}
-	
+
 	private void mostrarMinas() {
-		campos.stream().filter(c -> c.isMinado())
-		.forEach(c -> c.setAberto(true));
+		campos.stream().filter(c -> c.isMinado()).forEach(c -> c.setAberto(true));
 	}
-	
 
 	public void alternarMarcacao(int Qtdlinhas, int Qtdcolunas) {
 		campos.parallelStream().filter(c -> c.getLinha() == Qtdlinhas && c.getColuna() == Qtdcolunas).findFirst()
@@ -108,5 +109,19 @@ public class Tabuleiro implements CampoObservador{
 		}
 		
 	}
+
+	public int getQtdlinhas() {
+		return Qtdlinhas;
+	}
+
+	public int getQtdcolunas() {
+		return Qtdcolunas;
+	}
+
+	public int getQtdminas() {
+		return Qtdminas;
+	}
+
+	
 	
 }
